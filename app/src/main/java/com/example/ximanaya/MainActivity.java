@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(int i, String s) {
-                Log.d(TAG, "onError: "+i+"     "+s);
+                Log.d(TAG, "onError: "+i+"     "+s);//
             }
         });
     }
