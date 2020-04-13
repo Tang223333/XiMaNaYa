@@ -50,6 +50,8 @@ dependencies {
     //OkHttp（网络请求框架）
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     debugImplementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
+    // SDK联网框架使用okhttp
+    api 'com.squareup.okio:okio:1.15.0'
     //Gson(谷歌官方 Json 库)
     implementation 'com.google.code.gson:gson:2.8.5'
     //EventBus(Android 事件总线)
