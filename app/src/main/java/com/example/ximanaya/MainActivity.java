@@ -38,7 +38,7 @@ public class MainActivity extends FragmentActivity {
         indicatAdapter.setOnIndicatorTapClickListener(new indicatAdapter.OnIndicatorTapClickListener() {
             @Override
             public void onTabClick(Integer index) {
-                if (indicat_pager!=null){
+                if (indicat_pager!=null){//
                     indicat_pager.setCurrentItem(index);
                 }
             }
