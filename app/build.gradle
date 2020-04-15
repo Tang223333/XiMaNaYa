@@ -69,4 +69,5 @@ dependencies {
     implementation files('libs\\XmDownload_1.7.jar')
     implementation files('libs\\XmlyOAuth2SDK_V1.11.jar')
     implementation files('libs\\xutil3.3.6.jar')
+    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
 }
