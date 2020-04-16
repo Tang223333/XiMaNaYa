@@ -3,12 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="推荐界面"
-        android:textSize="30sp"
-        android:textColor="#000" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reconmmend_list"
+        android:layout_width="match_parent"
+        android:background="#fff4f4f4"
+        android:overScrollMode="never"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>
