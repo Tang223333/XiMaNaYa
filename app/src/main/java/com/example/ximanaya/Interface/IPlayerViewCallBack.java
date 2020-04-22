@@ -44,7 +44,7 @@ public interface IPlayerViewCallBack {
     void onAdFubusged();
 
     //更新当前节目
-    void onTrackUpdate(Track track,int playIndex);
+    void onTrackUpdate(Track track,int playIndex);//
 
     //通知UI更新播放列表顺序或逆序图标
     void onUpdateListOrder(boolean isReverse);
