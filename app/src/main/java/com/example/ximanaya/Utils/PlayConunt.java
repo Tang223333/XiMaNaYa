@@ -9,10 +9,10 @@ public class PlayConunt {
             return playCount+"";
         }else if (playCount>=10000&&playCount<100000000){
             playCount=playCount/10000;
-            return new DecimalFormat("#").format(playCount)+"万";
+            return new DecimalFormat("0").format(playCount)+"万";
         }else {
             playCount=playCount/100000000;
-            return new DecimalFormat("#").format(playCount)+"亿";
+            return new DecimalFormat("0").format(playCount)+"亿";
         }
     }
 }

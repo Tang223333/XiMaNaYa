@@ -48,6 +48,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     public void getRecommendList() {
         //获取数据
         //封装参数
+        updateLoading();
         Map<String, String> map = new HashMap<String, String>();
         //这个参数表示一页数据返回多少条
         map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT + "");
@@ -67,6 +68,7 @@ public class RecommendPresenter implements IRecommendPresenter {
                 //数据出错
                 LogUtils.d(TAG, "errer --> " + i);
                 LogUtils.d(TAG, "errerMsg --> " + s);
+                handlerErrer();
             }
         });
     }
@@ -76,31 +78,52 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     }
 
-
-    private void handlerRecommendResult(List<Album> albumList) {
-        //通知UI
-        if (mCallbacks!=null){
-            for(IrecommendVoiewCallback callback:mCallbacks){
-                Log.d(TAG, "handlerRecommendResult: "+albumList.size());
-                callback.onRecommendListLoaded(albumList);
-            }
-        }
-    }
-
     @Override
     public void loadMore() {
 
     }
 
+    private void handlerErrer() {
+        //通知UI
+        if (mCallbacks!=null){
+            for(IrecommendVoiewCallback callback:mCallbacks){
+                callback.onNetworkError();
+            }
+        }
+    }
+
+
+    private void handlerRecommendResult(List<Album> albumList) {
+        if (albumList != null) {
+            if (albumList.size()==0) {
+                for(IrecommendVoiewCallback callback:mCallbacks){
+                    Log.d(TAG, "handlerRecommendResult: "+albumList.size());
+                    callback.onEmpty();
+                }
+            }else {
+                for(IrecommendVoiewCallback callback:mCallbacks){
+                    Log.d(TAG, "handlerRecommendResult: "+albumList.size());
+                    callback.onRecommendListLoaded(albumList);
+                }
+            }
+        }
+    }
+    private void updateLoading(){
+        for(IrecommendVoiewCallback callback:mCallbacks){
+            callback.onLoading();
+        }
+    }
+
     @Override
-    public void registerViewCallBack(IrecommendVoiewCallback callback) {
+    public void registerViewCallback(IrecommendVoiewCallback callback) {
+        Log.d(TAG, "registerViewCallBack: "+mCallbacks.contains(callback)+"  "+mCallbacks.size());
         if (mCallbacks!=null&&!mCallbacks.contains(callback)){
             mCallbacks.add(callback);
         }
     }
 
     @Override
-    public void unregisterViewCallBack(IrecommendVoiewCallback callback) {
+    public void unregisterViewCallback(IrecommendVoiewCallback callback) {
         if (mCallbacks!=null){
             mCallbacks.remove(callback);
         }

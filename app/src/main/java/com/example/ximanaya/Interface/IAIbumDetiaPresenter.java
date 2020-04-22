@@ -2,12 +2,7 @@ package com.example.ximanaya.Interface;
 
 import com.example.ximanaya.Base.IBasePresenter;
 
-//实现接口，获取数据
-public interface IRecommendPresenter extends IBasePresenter<IrecommendVoiewCallback> {
-    /**
-     * 获取推荐内容
-     */
-    void getRecommendList();
+public interface IAIbumDetiaPresenter extends IBasePresenter<IAlbumDetaViewCallback> {
 
     /**
      * 下拉刷新更多内容
@@ -19,4 +14,8 @@ public interface IRecommendPresenter extends IBasePresenter<IrecommendVoiewCallb
      */
     void loadMore();
 
+    /**
+     * 获取专辑详情
+     */
+    void getAIbumDetail(int albumId, int page);
 }

@@ -1,5 +1,6 @@
 package com.example.ximanaya.Fragment;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,34 +13,56 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ximanaya.Adapter.RecommendListAdapter;
 import com.example.ximanaya.Base.BaseFragment;
+import com.example.ximanaya.DetailActivity;
 import com.example.ximanaya.Interface.IrecommendVoiewCallback;
+import com.example.ximanaya.Predenter.AlbumDetailPresenter;
 import com.example.ximanaya.Predenter.RecommendPresenter;
 import com.example.ximanaya.R;
-import com.example.ximanaya.Utils.Constants;
 import com.example.ximanaya.Utils.LogUtils;
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
-import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
+import com.example.ximanaya.View.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
-import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 
 import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class RecommendFragment extends BaseFragment implements IrecommendVoiewCallback {
+public class RecommendFragment extends BaseFragment implements IrecommendVoiewCallback, UILoader.onRetryClickListener, RecommendListAdapter.OnRecommendItemClickListener {
 
     private static final String TAG = "RecommendFragment";
     private View rootView;
     private RecyclerView mReconmmendList;
     private RecommendListAdapter recommendListAdapter;
     private RecommendPresenter mRecommendPresenter;
+    private UILoader uiLoader;
 
     @Override
-    protected View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container) {
-        rootView = layoutInflater.inflate(R.layout.fragment_recommend, container, false);
+    protected View onSubViewLoaded(final LayoutInflater layoutInflater, ViewGroup container) {
+        uiLoader = new UILoader(getContext()) {
+            @Override
+            protected View getSuccessView(ViewGroup continer) {
+                return createSwiccessView(layoutInflater,continer);
+            }
+        };
+
+        //获取到逻辑层的对象
+        mRecommendPresenter = RecommendPresenter.getInstance();
+        //先要设置通知接口注册
+        mRecommendPresenter.registerViewCallback(this);
+        //获取推荐列表
+        mRecommendPresenter.getRecommendList();
+
+        if (uiLoader.getParent() instanceof ViewGroup) {
+            ((ViewGroup) uiLoader.getParent()).removeView(uiLoader);
+        }
+
+        uiLoader.setonRetryClickListener(this);
+        //返回记得该
+        return uiLoader;
+    }
+
+    private View createSwiccessView(LayoutInflater layoutInflater, ViewGroup continer) {
+        LogUtils.d(TAG, "createSwiccessView: "+continer);
+        rootView = layoutInflater.inflate(R.layout.fragment_recommend, continer, false);
         //RecycleView的使用
         //1.找到控件
         mReconmmendList=rootView.findViewById(R.id.reconmmend_list);
@@ -59,14 +82,7 @@ public class RecommendFragment extends BaseFragment implements IrecommendVoiewCa
         //3.设置适配器
         recommendListAdapter = new RecommendListAdapter();
         mReconmmendList.setAdapter(recommendListAdapter);
-
-        //获取到逻辑层的对象
-        mRecommendPresenter = RecommendPresenter.getInstance();
-        //先要设置通知接口注册
-        mRecommendPresenter.registerViewCallBack(this);
-        //获取推荐列表
-        mRecommendPresenter.getRecommendList();
-
+        recommendListAdapter.setOnRecommendItemClickListener(this);
         return rootView;
     }
 
@@ -76,16 +92,25 @@ public class RecommendFragment extends BaseFragment implements IrecommendVoiewCa
         //数据获取承购，及可以更新UI
         Log.d(TAG, "onRecommendListLoaded: "+result.size());
         recommendListAdapter.setData(result);
+        uiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
     }
 
     @Override
-    public void onLoaderMore(List<Album> result) {
-
+    public void onNetworkError() {
+        LogUtils.d(TAG,"onNetworkError");
+        uiLoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
     }
 
     @Override
-    public void onRefreshMore(List<Album> result) {
+    public void onEmpty() {
+        LogUtils.d(TAG,"onEmpty");
+        uiLoader.updateStatus(UILoader.UIStatus.EMPTY);
+    }
 
+    @Override
+    public void onLoading() {
+        LogUtils.d(TAG,"onLoading");
+        uiLoader.updateStatus(UILoader.UIStatus.LOADING);
     }
 
     @Override
@@ -93,7 +118,24 @@ public class RecommendFragment extends BaseFragment implements IrecommendVoiewCa
         super.onDestroy();
         //取消接口的注册，以免内存泄漏
         if (mRecommendPresenter!=null){
-            mRecommendPresenter.unregisterViewCallBack(this);
+            mRecommendPresenter.unregisterViewCallback(this);
         }
+    }
+
+    @Override
+    public void onRetryClick() {
+        //表示网络不佳的时候用户点击了重试
+        if (mRecommendPresenter != null) {
+            mRecommendPresenter.getRecommendList();
+        }
+    }
+
+    @Override
+    public void onItemClick(int position, Album album) {
+        AlbumDetailPresenter.getInstance().setTargetAlbum(album);
+        //根据位置拿到数据
+        //item被点击了,跳转到详情界面
+        Intent intent=new Intent(getContext(), DetailActivity.class);
+        startActivity(intent);
     }
 }

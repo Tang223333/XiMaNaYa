@@ -1,5 +1,6 @@
 package com.example.ximanaya.Adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +15,13 @@ import com.example.ximanaya.R;
 import com.example.ximanaya.Utils.PlayConunt;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
-import net.lucode.hackware.magicindicator.buildins.UIUtil;
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.ximanaya.Utils.PlayConunt.PlayConunts;
-
 public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdapter.InnerHolder> {
+
+    private static final String TAG = "RecommendListAdapter";
+    private OnRecommendItemClickListener mRecommendItemClickListener=null;
 
     private List<Album> mData=new ArrayList<>();
 
@@ -35,9 +34,19 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InnerHolder holder, int position) {
+    public void onBindViewHolder(@NonNull InnerHolder holder, final int position) {
         //封装数据
         holder.itemView.setTag(position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mRecommendItemClickListener!=null){
+                    int clickPosition=(int) v.getTag();
+                    mRecommendItemClickListener.onItemClick(clickPosition,mData.get(clickPosition));
+                }
+                Log.d(TAG, "onClick: itemView  -->"+v.getTag());
+            }
+        });
         holder.setData(mData.get(position));
     }
 
@@ -80,5 +89,13 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
 
             Glide.with(itemView.getContext()).load(album.getCoverUrlLarge()).into(mAlbumCover);
         }
+    }
+
+    public void setOnRecommendItemClickListener(OnRecommendItemClickListener listener){
+        this.mRecommendItemClickListener=listener;
+    }
+
+    public interface OnRecommendItemClickListener{
+        void onItemClick(int position, Album album);
     }
 }

@@ -1,15 +1,23 @@
 package com.example.ximanaya.Base;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 
 import androidx.annotation.RequiresApi;
 
 import com.example.ximanaya.Utils.LogUtils;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
+import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 
 public class BaseApplication extends Application {
+
+    private static Handler handler=null;
+
+    private static Context sContext=null;
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void onCreate() {
@@ -29,5 +37,20 @@ public class BaseApplication extends Application {
             mXimalaya.setPackid("com.ximalaya.qunfeng");
             mXimalaya.init(this ,mAppSecret);
         }
+
+        //初始化播放器
+        XmPlayerManager.getInstance(this).init();
+
+        handler=new Handler();
+
+        sContext=getBaseContext();
+    }
+
+    public static Context getAppContext(){
+        return sContext;
+    }
+
+    public static  Handler getHandler(){
+        return handler;
     }
 }
