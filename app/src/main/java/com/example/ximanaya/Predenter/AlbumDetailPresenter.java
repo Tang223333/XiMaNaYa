@@ -6,6 +6,7 @@ import com.example.ximanaya.Interface.IAIbumDetiaPresenter;
 import com.example.ximanaya.Interface.IAlbumDetaViewCallback;
 import com.example.ximanaya.Utils.Constants;
 import com.example.ximanaya.Utils.LogUtils;
+import com.example.ximanaya.api.XimalayaApi;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
@@ -23,6 +24,11 @@ public class AlbumDetailPresenter implements IAIbumDetiaPresenter {
     private static final String TAG = "AlbumDetailPresenter";
     private List<IAlbumDetaViewCallback> callbacks=new ArrayList<>();
     private Album mTargetAlbum=null;
+    //当前的专辑id
+    private int mCurrentAlbumId=-1;
+    //当前页
+    private int mCurrentPageIndex=0;
+    private List<Track>  mTracks=new ArrayList<>();
 
     private AlbumDetailPresenter() {
     }
@@ -46,35 +52,57 @@ public class AlbumDetailPresenter implements IAIbumDetiaPresenter {
 
     @Override
     public void loadMore() {
-
+        //去加载更多类容
+        mCurrentPageIndex++;
+        //传入true表示结果会追加到列表后方
+        doLoaded(true);
     }
 
-    @Override
-    public void getAIbumDetail(int albumId, int page) {
-        //根据页面和专辑id获取
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(DTransferConstants.ALBUM_ID, albumId+"");
-        map.put(DTransferConstants.SORT, "asc");
-        map.put(DTransferConstants.PAGE, page+"");
-        map.put(DTransferConstants.PAGE_SIZE, Constants.COUNT_DETAIL+"");
-        CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
+    private void doLoaded(final boolean isLloaderMore){
+        XimalayaApi ximalayaApi = XimalayaApi.getXimalayaApi();
+        ximalayaApi.getAlbumDetail(new IDataCallBack<TrackList>() {
             @Override
             public void onSuccess(TrackList trackList) {
-                LogUtils.d(TAG, "onSuccess: "+Thread.currentThread().getName());
                 if (trackList != null) {
                     List<Track> tracks=trackList.getTracks();
-                    Log.d(TAG, "onSuccess: "+tracks.size());
-                    handlerAlbumDetailResult(tracks);
+                    if (isLloaderMore) {
+                        //上拉加载，结果放在后面去
+                        mTracks.addAll(tracks);
+                        int size = tracks.size();
+                        handlerLoadermoreResult(size);
+                    }else {
+                        //下拉刷新，结果放到前面
+                        mTracks.addAll(0,tracks);
+                    }
+                    handlerAlbumDetailResult(mTracks);
                 }
             }
 
             @Override
             public void onError(int i, String s) {
-                Log.d(TAG, "onError: errprcpde -->" +i);
-                Log.d(TAG, "onError: errprMag -->" +s);
+                if (isLloaderMore) {
+                    mCurrentPageIndex--;
+                }
+                LogUtils.d(TAG, "onError: errprcpde -->" +i);
+                LogUtils.d(TAG, "onError: errprMag -->" +s);
                 handlerError(i,s);
             }
-        });
+        },mCurrentAlbumId,mCurrentPageIndex);
+    }
+
+    //处理加载更多的结果
+    private void handlerLoadermoreResult(int size) {
+        for (IAlbumDetaViewCallback callback : callbacks) {
+            callback.onLoaderMoreFinished(size);
+        }
+    }
+
+    @Override
+    public void getAIbumDetail(int albumId, int page) {
+        mTracks.clear();
+        this.mCurrentAlbumId=albumId;
+        this.mCurrentPageIndex=page;
+        doLoaded(false);
     }
 
     private void handlerError(int i, String s) {

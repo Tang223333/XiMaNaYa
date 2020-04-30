@@ -96,8 +96,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerViewCallBack,
         //在界面初始化以后在获取数据
         if (mPlayPresentrer != null) {
             mPlayPresentrer.getPlayList();
-            LogUtils.d(TAG, "onClick: " + mPlayPresentrer.isPlay());
-            if (mPlayPresentrer.isPlay()) {
+            LogUtils.d(TAG, "onClick: " + mPlayPresentrer.isPlaying());
+            if (mPlayPresentrer.isPlaying()) {
                 mPlayOrPaussBtn.setImageResource(R.drawable.selector_player_stop);
             } else {
                 mPlayOrPaussBtn.setImageResource(R.drawable.selector_player_play);
@@ -137,7 +137,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerViewCallBack,
             @Override
             public void onClick(View v) {
                 //如果正在播放就暂停，是暂停就播放
-                if (mPlayPresentrer.isPlay()) {
+                if (mPlayPresentrer.isPlaying()) {
                     mPlayPresentrer.pause();
                 } else {
                     mPlayPresentrer.play();
@@ -431,10 +431,12 @@ public class PlayerActivity extends BaseActivity implements IPlayerViewCallBack,
 
     @Override
     public void onTrackUpdate(Track track, int playIndex) {
-        this.mTrack = track;
-        Log.d(TAG, "onTrackTitleUpdate: " + track.getTrackTitle());
-        if (mTrackTitle != null) {
-            mTrackTitle.setText(track.getTrackTitle());
+        if (track != null) {
+            this.mTrack = track;
+            Log.d(TAG, "onTrackTitleUpdate: " + track.getTrackTitle());
+            if (mTrackTitle != null) {
+                mTrackTitle.setText(track.getTrackTitle());
+            }
         }
         //当前积木改变的时候，我们就获取到当前播放器的位置
         //当前的节目改变以后，要修改页面的图片

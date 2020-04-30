@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.ximanaya.Adapter.RecommendListAdapter;
+import com.example.ximanaya.Adapter.AlbumListAdapter;
 import com.example.ximanaya.Base.BaseFragment;
 import com.example.ximanaya.DetailActivity;
 import com.example.ximanaya.Interface.IrecommendVoiewCallback;
@@ -20,18 +20,19 @@ import com.example.ximanaya.Predenter.RecommendPresenter;
 import com.example.ximanaya.R;
 import com.example.ximanaya.Utils.LogUtils;
 import com.example.ximanaya.View.UILoader;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class RecommendFragment extends BaseFragment implements IrecommendVoiewCallback, UILoader.onRetryClickListener, RecommendListAdapter.OnRecommendItemClickListener {
+public class RecommendFragment extends BaseFragment implements IrecommendVoiewCallback, UILoader.onRetryClickListener, AlbumListAdapter.OnRecommendItemClickListener {
 
     private static final String TAG = "RecommendFragment";
     private View rootView;
     private RecyclerView mReconmmendList;
-    private RecommendListAdapter recommendListAdapter;
+    private AlbumListAdapter mAlbumListAdapter;
     private RecommendPresenter mRecommendPresenter;
     private UILoader uiLoader;
 
@@ -66,6 +67,8 @@ public class RecommendFragment extends BaseFragment implements IrecommendVoiewCa
         //RecycleView的使用
         //1.找到控件
         mReconmmendList=rootView.findViewById(R.id.reconmmend_list);
+        TwinklingRefreshLayout twinklingRefreshLayout=rootView.findViewById(R.id.over_scroll_view);
+        twinklingRefreshLayout.setPureScrollModeOn();
         //2.设置布局管理器
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -80,9 +83,9 @@ public class RecommendFragment extends BaseFragment implements IrecommendVoiewCa
             }
         });
         //3.设置适配器
-        recommendListAdapter = new RecommendListAdapter();
-        mReconmmendList.setAdapter(recommendListAdapter);
-        recommendListAdapter.setOnRecommendItemClickListener(this);
+        mAlbumListAdapter = new AlbumListAdapter();
+        mReconmmendList.setAdapter(mAlbumListAdapter);
+        mAlbumListAdapter.setOnRecommendItemClickListener(this);
         return rootView;
     }
 
@@ -91,7 +94,7 @@ public class RecommendFragment extends BaseFragment implements IrecommendVoiewCa
         //当我们或去到推荐内容的时候，这个方法就会被调用（成功T）
         //数据获取承购，及可以更新UI
         Log.d(TAG, "onRecommendListLoaded: "+result.size());
-        recommendListAdapter.setData(result);
+        mAlbumListAdapter.setData(result);
         uiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
     }
 

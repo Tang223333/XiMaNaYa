@@ -18,9 +18,9 @@ import com.ximalaya.ting.android.opensdk.model.album.Album;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdapter.InnerHolder> {
+public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.InnerHolder> {
 
-    private static final String TAG = "RecommendListAdapter";
+    private static final String TAG = "AlbumListAdapter";
     private OnRecommendItemClickListener mRecommendItemClickListener=null;
 
     private List<Album> mData=new ArrayList<>();
@@ -64,6 +64,10 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
         notifyDataSetChanged();
     }
 
+    public int getDataSise() {
+        return mData.size();
+    }
+
     public class InnerHolder extends RecyclerView.ViewHolder {
         public InnerHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,7 +91,7 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
             mAlbumPlayConunt.setText(""+ PlayConunt.PlayConunts(album.getPlayCount()));
             mAlbumContentSize.setText(""+album.getIncludeTrackCount());
 
-            Glide.with(itemView.getContext()).load(album.getCoverUrlLarge()).into(mAlbumCover);
+            Glide.with(itemView.getContext()).load(album.getCoverUrlLarge()).error(R.mipmap.content_empty).into(mAlbumCover);
         }
     }
 

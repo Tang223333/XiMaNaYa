@@ -118,8 +118,8 @@ public class SobPopWindow extends PopupWindow {
     }
 
     //更新列表顺序或逆序
-    public void setUpdateOrder(boolean isOrder){
-        if (isOrder) {
+    public void setUpdateOrder(boolean isReverse){
+        if (isReverse) {
             mMPlayOrderIv.setImageResource(R.drawable.selector_player_descending2);
             mPlayOrderTv.setText(BaseApplication.getAppContext().getResources().getString(R.string.play_order_false));
         }else {

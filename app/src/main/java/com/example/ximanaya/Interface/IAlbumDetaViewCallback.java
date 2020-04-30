@@ -25,4 +25,12 @@ public interface IAlbumDetaViewCallback {
      * 网络错误
      */
     void onNotworkError(int errorCod, String errorMag);
+
+    //加载更多的结果
+    //size 更新的个数,0表示失败
+    void onLoaderMoreFinished(int size);
+
+    //下拉加载更多的结果
+    //size 更新的个数,0表示失败
+    void onRefreshFinished(int size);
 }
