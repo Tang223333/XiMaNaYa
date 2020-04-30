@@ -208,7 +208,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     private void switch2Search(String keyWord) {
         if (TextUtils.isEmpty(keyWord)) {
-            //给个提示
+            //给个提示//
             Toast.makeText(this, "搜索关键字不能为空", Toast.LENGTH_SHORT).show();
             return;
         }
