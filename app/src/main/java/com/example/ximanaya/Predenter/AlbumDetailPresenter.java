@@ -4,20 +4,15 @@ import android.util.Log;
 
 import com.example.ximanaya.Interface.IAIbumDetiaPresenter;
 import com.example.ximanaya.Interface.IAlbumDetaViewCallback;
-import com.example.ximanaya.Utils.Constants;
 import com.example.ximanaya.Utils.LogUtils;
-import com.example.ximanaya.api.XimalayaApi;
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
+import com.example.ximanaya.Data.XimalayaApi;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.model.track.TrackList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AlbumDetailPresenter implements IAIbumDetiaPresenter {
 

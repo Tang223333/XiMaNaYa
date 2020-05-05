@@ -1,13 +1,12 @@
 package com.example.ximanaya.Predenter;
 
 import android.util.Log;
-import android.widget.HorizontalScrollView;
 
 import com.example.ximanaya.Interface.ISearchCallback;
 import com.example.ximanaya.Interface.ISearchPresenter;
 import com.example.ximanaya.Utils.Constants;
 import com.example.ximanaya.Utils.LogUtils;
-import com.example.ximanaya.api.XimalayaApi;
+import com.example.ximanaya.Data.XimalayaApi;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.album.SearchAlbumList;

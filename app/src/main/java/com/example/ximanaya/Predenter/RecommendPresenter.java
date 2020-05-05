@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.ximanaya.Interface.IRecommendPresenter;
 import com.example.ximanaya.Interface.IrecommendVoiewCallback;
 import com.example.ximanaya.Utils.LogUtils;
-import com.example.ximanaya.api.XimalayaApi;
+import com.example.ximanaya.Data.XimalayaApi;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
@@ -16,6 +16,7 @@ import java.util.List;
 public class RecommendPresenter implements IRecommendPresenter {
 
     private List<Album> mCurrentRecommend = null;
+    private List<Album> mReccommendList;
 
     private RecommendPresenter() {
     }
@@ -55,6 +56,12 @@ public class RecommendPresenter implements IRecommendPresenter {
      */
     @Override
     public void getRecommendList() {
+        //如果内容不为空，娜美直接使用当前内容
+        if (mReccommendList!=null&&mReccommendList.size()>0){
+            Log.d(TAG, "getRecommendList: --> from list.");
+            handlerRecommendResult(mReccommendList);
+            return;
+        }
         //获取数据
         //封装参数
         updateLoading();
@@ -64,9 +71,10 @@ public class RecommendPresenter implements IRecommendPresenter {
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
                 //数据请求成功
                 if (gussLikeAlbumList != null) {
-                    List<Album> albumLists = gussLikeAlbumList.getAlbumList();
-                    Log.d(TAG, "onSuccess: " + albumLists.size());
-                    handlerRecommendResult(albumLists);
+                    mReccommendList = gussLikeAlbumList.getAlbumList();
+                    Log.d(TAG, "getRecommendList: --> from network.");
+                    Log.d(TAG, "onSuccess: " + mReccommendList.size());
+                    handlerRecommendResult(mReccommendList);
                 }
             }
 

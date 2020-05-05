@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -26,11 +25,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.ximanaya.Adapter.AlbumListAdapter;
 import com.example.ximanaya.Adapter.SearchRecommendAdapter;
 import com.example.ximanaya.Base.BaseActivity;
-import com.example.ximanaya.Base.BaseApplication;
 import com.example.ximanaya.Interface.ISearchCallback;
 import com.example.ximanaya.Predenter.AlbumDetailPresenter;
 import com.example.ximanaya.Predenter.SearchPresenter;
-import com.example.ximanaya.Utils.Constants;
 import com.example.ximanaya.Utils.LogUtils;
 import com.example.ximanaya.View.FlowTextLayout;
 import com.example.ximanaya.View.UILoader;
@@ -194,7 +191,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             }
         });
 
-        mAlbumListAdapter.setOnRecommendItemClickListener(new AlbumListAdapter.OnRecommendItemClickListener() {
+        mAlbumListAdapter.setOnAlbumItemClickListener(new AlbumListAdapter.OnAlbumItemClickListener() {
             @Override
             public void onItemClick(int position, Album album) {
                 AlbumDetailPresenter.getInstance().setTargetAlbum(album);
@@ -252,6 +249,15 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
                 @Override
                 protected View getSuccessView(ViewGroup container) {
                     return createSuccessView();
+                }
+
+                @Override
+                protected View getEmptyView() {
+                    //创建一个新的EmptyView
+                    View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_enpty_view,this,false);
+                    TextView textView=emptyView.findViewById(R.id.empty_view_tips_tv);
+                    textView.setText(R.string.search_no_sub_content_tips_text);
+                    return emptyView;
                 }
             };
             if (mUILoader.getParent() instanceof ViewGroup) {

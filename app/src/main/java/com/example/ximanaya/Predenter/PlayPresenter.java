@@ -1,7 +1,5 @@
 package com.example.ximanaya.Predenter;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,7 +7,7 @@ import com.example.ximanaya.Base.BaseApplication;
 import com.example.ximanaya.Interface.IPlayerPresenter;
 import com.example.ximanaya.Interface.IPlayerViewCallBack;
 import com.example.ximanaya.Utils.LogUtils;
-import com.example.ximanaya.api.XimalayaApi;
+import com.example.ximanaya.Data.XimalayaApi;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.PlayableModel;
 import com.ximalaya.ting.android.opensdk.model.advertis.Advertis;
@@ -25,22 +23,15 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP;
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM;
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP;
-
-public class PlayPresentrer implements IPlayerPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
+public class PlayPresenter implements IPlayerPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
 
     private List<IPlayerViewCallBack> mIPlayerViewCallBacks = new ArrayList<>();
 
-    private static PlayPresentrer sPlayPresentrer;
+    private static PlayPresenter sPlayPresentrer;
     private final XmPlayerManager mPlayerManager;
-    private static final String TAG = "PlayPresentrer";
+    private static final String TAG = "PlayPresenter";
     private boolean isPlayListSet = false;
     private int mPlayIndex = DEFULT_PLAY_INDEX;
     private Track mTrack;
@@ -50,7 +41,7 @@ public class PlayPresentrer implements IPlayerPresenter, IXmAdsStatusListener, I
     private int ProgressDuration=0;
 
 
-    private PlayPresentrer() {
+    private PlayPresenter() {
         mPlayerManager = XmPlayerManager.getInstance(BaseApplication.getAppContext());
         //注册广告相关的接口
         mPlayerManager.addAdsStatusListener(this);
@@ -60,11 +51,11 @@ public class PlayPresentrer implements IPlayerPresenter, IXmAdsStatusListener, I
     }
 
 
-    public static PlayPresentrer getPlayPresentrer() {
+    public static PlayPresenter getPlayPresentrer() {
         if (sPlayPresentrer == null) {
-            synchronized (PlayPresentrer.class) {
+            synchronized (PlayPresenter.class) {
                 if (sPlayPresentrer == null) {
-                    sPlayPresentrer = new PlayPresentrer();
+                    sPlayPresentrer = new PlayPresenter();
                 }
             }
         }
@@ -328,6 +319,12 @@ public class PlayPresentrer implements IPlayerPresenter, IXmAdsStatusListener, I
 
     @Override
     public void onSoundSwitch(PlayableModel lastModel, PlayableModel curModel) {
+        if (lastModel != null) {
+            Log.d(TAG, "onSoundSwitch: lastModel --> "+lastModel);
+        }
+        if (curModel != null) {
+            Log.d(TAG, "onSoundSwitch: curModel --> "+curModel);
+        }
         //curModel代表是当前播放的内容
         //通过getKind()方法来获取他的类型
         //第一种写法（不推荐）
@@ -335,18 +332,19 @@ public class PlayPresentrer implements IPlayerPresenter, IXmAdsStatusListener, I
         //    Track currentTrack = (Track) curModel;
         //    LogUtils.d(TAG, "onSoundSwitch: "+currentTrack.getTrackTitle());
         //}
-
         mPlayIndex = mPlayerManager.getCurrentIndex();
 
         if (curModel instanceof Track) {
             mTrack = (Track) curModel;
             LogUtils.d(TAG, "onSoundSwitch: " + mIPlayerViewCallBacks.size());
+            HistoryPresenter historyPresenter=HistoryPresenter.getHistoryPresenter();
+            historyPresenter.addHistory(mTrack);
             for (IPlayerViewCallBack iPlayerViewCallBack : mIPlayerViewCallBacks) {
-                Log.d(TAG, "onSoundSwitch: " + mTrack.getTrackTitle());
+                LogUtils.d(TAG, "onSoundSwitch: " + mTrack.getTrackTitle());
                 iPlayerViewCallBack.onTrackUpdate(mTrack, mPlayIndex);
             }
-        }
 
+        }
     }
 
     @Override

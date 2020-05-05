@@ -16,13 +16,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.InnerHolser> {
+public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.InnerHolser> {
 
     private List<Track> mDetailData = new ArrayList<>();
     //格式化时间
     private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat mtimelongDateFormat = new SimpleDateFormat("mm:ss");
     private ItemClickListener mItemClickListener = null;
+    private ItemLongClickListener mItemLongClickListener = null;
 
     @NonNull
     @Override
@@ -36,7 +37,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
         //找到控件.设置数据
         final View itemView = holder.itemView;
         //顺序id
-        TextView mItemDetailId = (TextView) itemView.findViewById(R.id.item_detail_id);
+        final TextView mItemDetailId = (TextView) itemView.findViewById(R.id.item_detail_id);
         //标题
         TextView mItemDetailName = (TextView) itemView.findViewById(R.id.item_detail_name);
         //播放次数
@@ -47,7 +48,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
         TextView mItemDetailTime = (TextView) itemView.findViewById(R.id.item_detail_time);
 
         //设置数据
-        Track track = mDetailData.get(position);
+        final Track track = mDetailData.get(position);
         mItemDetailId.setText((position + 1) + "");
         mItemDetailName.setText(track.getTrackTitle());
         mItemDetailPlayConunt.setText(PlayConunt.PlayConunts(track.getPlayCount()));
@@ -64,8 +65,18 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
             public void onClick(View v) {
                 if (mItemClickListener != null) {
                     //参数需要有列表和位置
-                    mItemClickListener.onItemClick(mDetailData,position);
+                    mItemClickListener.onItemClick(mDetailData, position);
                 }
+            }
+        });
+
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mItemLongClickListener != null) {
+                    mItemLongClickListener.onItemLongClick(track);
+                }
+                return true;
             }
         });
     }
@@ -96,5 +107,13 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
 
     public interface ItemClickListener {
         void onItemClick(List<Track> detailData, int position);
+    }
+
+    public void setItemLongClickListener(ItemLongClickListener itemLongClickListener) {
+        this.mItemLongClickListener = itemLongClickListener;
+    }
+
+    public interface ItemLongClickListener {
+        void onItemLongClick(Track track);
     }
 }

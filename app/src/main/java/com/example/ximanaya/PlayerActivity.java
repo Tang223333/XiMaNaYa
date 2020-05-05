@@ -21,7 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.ximanaya.Adapter.PlayerTrackPagerAdapter;
 import com.example.ximanaya.Base.BaseActivity;
 import com.example.ximanaya.Interface.IPlayerViewCallBack;
-import com.example.ximanaya.Predenter.PlayPresentrer;
+import com.example.ximanaya.Predenter.PlayPresenter;
 import com.example.ximanaya.Utils.LogUtils;
 import com.example.ximanaya.View.SobPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
@@ -42,7 +42,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerViewCallBack,
 
     private static final String TAG = "PlayerActivity";
     private ImageView mPlayOrPaussBtn;
-    private PlayPresentrer mPlayPresentrer;
+    private PlayPresenter mPlayPresentrer;
     private SimpleDateFormat mMinFormat = new SimpleDateFormat("mm:ss");
     private SimpleDateFormat mHourFormat = new SimpleDateFormat("HH:mm:ss");
     private TextView mTrackDuration;
@@ -91,7 +91,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerViewCallBack,
         setContentView(R.layout.activity_player);
         initView();
         //测试播放
-        mPlayPresentrer = PlayPresentrer.getPlayPresentrer();
+        mPlayPresentrer = PlayPresenter.getPlayPresentrer();
         mPlayPresentrer.registerViewCallback(this);
         //在界面初始化以后在获取数据
         if (mPlayPresentrer != null) {

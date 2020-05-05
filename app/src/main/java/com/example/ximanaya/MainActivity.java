@@ -17,7 +17,7 @@ import com.example.ximanaya.Adapter.MainContentAdapter;
 import com.example.ximanaya.Adapter.indicatAdapter;
 import com.example.ximanaya.Base.BaseApplication;
 import com.example.ximanaya.Interface.IPlayerViewCallBack;
-import com.example.ximanaya.Predenter.PlayPresentrer;
+import com.example.ximanaya.Predenter.PlayPresenter;
 import com.example.ximanaya.Predenter.RecommendPresenter;
 import com.example.ximanaya.View.RoundRectImageView;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
@@ -40,7 +40,7 @@ public class MainActivity extends FragmentActivity implements IPlayerViewCallBac
     private TextView mMainHeadTitle;
     private TextView mMainSubTitle;
     private ImageView mMainPlayControl;
-    private PlayPresentrer mPlayPresentrer;
+    private PlayPresenter mPlayPresentrer;
     private LinearLayout mMainPlayControlItem;
     private View mView;
 
@@ -52,10 +52,11 @@ public class MainActivity extends FragmentActivity implements IPlayerViewCallBac
         initEvent();
 
         initPresenter();
+
     }
 
     private void initPresenter() {
-        mPlayPresentrer = PlayPresentrer.getPlayPresentrer();
+        mPlayPresentrer = PlayPresenter.getPlayPresentrer();
         mPlayPresentrer.registerViewCallback(this);
     }
 
@@ -64,7 +65,7 @@ public class MainActivity extends FragmentActivity implements IPlayerViewCallBac
             @Override
             public void onTabClick(Integer index) {
                 if (indicat_pager != null) {//
-                    indicat_pager.setCurrentItem(index);
+                    indicat_pager.setCurrentItem(index,false);
                 }
             }
         });
