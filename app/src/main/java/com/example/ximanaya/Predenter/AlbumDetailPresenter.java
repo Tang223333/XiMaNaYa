@@ -18,7 +18,7 @@ public class AlbumDetailPresenter implements IAIbumDetiaPresenter {
 
     private static final String TAG = "AlbumDetailPresenter";
     private List<IAlbumDetaViewCallback> callbacks=new ArrayList<>();
-    private Album mTargetAlbum=null;
+    private Album mTargetAlbum=null;//
     //当前的专辑id
     private int mCurrentAlbumId=-1;
     //当前页
